@@ -13,6 +13,7 @@
 
 
 @synthesize selectedImageTintColor = _selectedImageTintColor;
+@synthesize imageTintColor = _imageTintColor;
 @synthesize iconImage = _iconImage;
 
 
@@ -20,6 +21,13 @@
 {
     // use blue tint by default
     return _selectedImageTintColor != nil ? _selectedImageTintColor : [UIColor colorWithRed:41.0/255.0 green:147.0/255.0 blue:239.0/255.0 alpha:1.0];
+}
+
+
+- (UIColor *)imageTintColor
+{
+    // use light gray by default
+    return _imageTintColor != nil ? _imageTintColor : [UIColor colorWithWhite:0.8 alpha:1];
 }
 
 
@@ -67,9 +75,9 @@
         CGFloat alpha2 = 0.0;
         CGFloat alpha3 = 0.1;
         CGFloat alpha4 = 0.5;
-        CGFloat locations[5] = {0,0.55,0.55,0.7,1};
+        CGFloat locations[] = {0,0.55,0.55,0.7,1};
         
-        CGFloat components[20] = {1,1,1,alpha0,1,1,1,alpha1,1,1,1,alpha2,1,1,1,alpha3,1,1,1,alpha4};
+        CGFloat components[] = {1,1,1,alpha0,1,1,1,alpha1,1,1,1,alpha2,1,1,1,alpha3,1,1,1,alpha4};
         CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
         CGGradientRef colorGradient = CGGradientCreateWithColorComponents(colorSpace, components, locations, (size_t)5);
         CGColorSpaceRelease(colorSpace);
@@ -93,9 +101,27 @@
     }
     else
     {
-        CGContextDrawImage(context,
-                           imageRect,
-                           self.iconImage.CGImage);
+        // setup gradient
+        CGFloat locations[] = {0,1};
+        
+        CGFloat components[] = {0,0,0,0,0,0,0,0.3};
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        CGGradientRef colorGradient = CGGradientCreateWithColorComponents(colorSpace, components, locations, sizeof(locations)/sizeof(CGFloat));
+        CGColorSpaceRelease(colorSpace);
+        
+        // set transparency layer and clip to mask
+        CGContextBeginTransparencyLayer(context, NULL);
+        CGContextClipToMask(context, imageRect, [self.iconImage CGImage]);
+        
+        // fill and end the transparency layer
+        CGContextSetFillColorWithColor(context, [self.imageTintColor CGColor]);
+        CGContextFillRect(context, imageRect);
+        CGPoint start = CGPointMake(CGRectGetMidX(imageRect), imageRect.origin.y);
+        CGPoint end = CGPointMake(CGRectGetMidX(imageRect)-imageRect.size.height/4, imageRect.size.height+imageRect.origin.y);
+        CGContextDrawLinearGradient(context, colorGradient, end, start, 0);
+        CGContextEndTransparencyLayer(context);
+        
+        CGGradientRelease(colorGradient);
     }
 }
 

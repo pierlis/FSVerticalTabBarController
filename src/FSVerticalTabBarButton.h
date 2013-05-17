@@ -12,6 +12,7 @@
 @interface FSVerticalTabBarButton : UITableViewCell
 
 
+@property (nonatomic, readwrite, assign) UIColor *imageTintColor;
 @property (nonatomic, readwrite, assign) UIColor *selectedImageTintColor;
 @property (nonatomic, readwrite, strong) UIImage *iconImage;
 
