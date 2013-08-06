@@ -38,7 +38,7 @@
     {
         self.textLabel.backgroundColor = [UIColor clearColor];
         self.textLabel.textColor = [UIColor lightGrayColor];
-        self.textLabel.textAlignment = UITextAlignmentCenter;
+        self.textLabel.textAlignment = NSTextAlignmentCenter;
         self.textLabel.font = [UIFont boldSystemFontOfSize:12.0];
     }
     return self;
